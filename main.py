@@ -13,10 +13,10 @@ print(res)
 def send(id, message):
     #sending messages with bot
     # add data to history.txt file
-    for i in range(10):
-        bot.send_message(id, message)
-        time.sleep(30)
-        print("Message {} sent successfully !".format(i))
+    # for i in range(1):
+    bot.send_message(id, message)
+        # time.sleep(30)
+        # print("Message {} sent successfully !".format(i))
 
     # add data to history.txt file
     file = open('history.txt', 'a')
@@ -54,9 +54,11 @@ def rech(A, e):
 
 choice = int(input("Enter your choice send new message or send an existing one (write 1 or 2): "))
 if choice == 1:
-    id = input("Enter the chat id: ")
-    message = input("Write the message: ")
-    send(id, message)
+    n = int(input("How many channels you want to send ? "))
+    for i in range(n):
+        id = input("Enter the chat {} id: ".format(i))
+        message = input("Write the message of the channel {}: ".format(i))
+        send(id, message)
 elif choice == 2:
     id = int(input("Enter the id of the message: "))
     id_chat = input("Enter the chat id: ")
