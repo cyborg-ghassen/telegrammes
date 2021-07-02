@@ -1,47 +1,50 @@
+import time
+import random
+import csv
+import sys
+from telethon.errors.rpcerrorlist import PeerFloodError
+from telethon.tl.types import InputPeerUser
+from telethon.sync import TelegramClient
+from telethon.sync import TelegramClient
+from telethon.tl.functions.messages import GetDialogsRequest
+from telethon.tl.types import InputPeerEmpty
 import telebot
 import requests
-import time
+
+api_id = 6064139
+api_hash = 'e17f8cdd2dc3ffe5d8ec5752908976d2'
+phone = '+21699245442'
+SLEEP_TIME = 3
+client = TelegramClient(phone, api_id, api_hash)
+groups = []
+chats = []
+last_date = None
+chunk_size = 200
+
+client.connect()
+if not client.is_user_authorized():
+    client.send_code_request(phone)
+    client.sign_in(phone, input('Enter the code: '))
+
+result = client(GetDialogsRequest(
+    offset_date=last_date,
+    offset_id=0,
+    offset_peer=InputPeerEmpty(),
+    limit=chunk_size,
+    hash=0
+))
+
+chats.extend(result.chats)
+
+for chat in chats:
+    try:
+        if chat.megagroup == True:
+            groups.append(chat)
+    except:
+        continue
 
 
-API_KEY = input("Enter the API key: ")
-bot = telebot.TeleBot(API_KEY)
-res = requests.get(
-    "https://api.telegram.org/bot{}/getUpdates".format(API_KEY)).json()
-print(res)
 
-
-def send(id, message):
-    #sending messages with bot
-    # add data to history.txt file
-    # for i in range(1):
-    bot.send_message(id, message)
-        # time.sleep(30)
-        # print("Message {} sent successfully !".format(i))
-
-    # add data to history.txt file
-    file = open('history.txt', 'a')
-    m = []
-    m.append(id + '\t\t')
-    m.append(message + '\n')
-    print(m)
-    file.writelines(m)
-    file.close()
-
-
-# add data to chats.txt
-file = open('chat.txt', 'a')
-m = []
-try:
-    m.append(str(res['result'][0]['message']['chat']['id']) + '\t\t')
-    m.append(res['result'][0]['message']['chat']['title'] + '\t\t')
-    m.append(res['result'][0]['message']['chat']['username'] + '\t\t')
-    m.append(res['result'][0]['message']['chat']['text'] + '\t\t')
-    m.append(res['result'][0]['message']['chat']['type'] + '\n')
-except Exception as k:
-    print(k)
-print(m)
-file.writelines(m)
-file.close()
 
 
 # search function
@@ -49,24 +52,56 @@ def rech(A, e):
     for i in A:
         if i == e:
             return True
-    return False,e
+    return False, e
 
 
-choice = int(input("Enter your choice send new message or send an existing one (write 1 or 2): "))
+i = 0
+for g in groups:
+    print(str(i) + '- ' + g.title)
+    i += 1
+
+g_index = input("Enter a Number: ")
+target_group = groups[int(g_index)]
+user = client.get_dialogs()
+
+
+def save(id, message):
+    to = open("history.txt", "a")
+    l = []
+    l.append(str(id) + "\t\t")
+    l.append(message + "\n")
+    to.writelines(l)
+
+
+choice = int(input("Send a new message or an existing one (1 or 2): "))
 if choice == 1:
-    n = int(input("How many channels you want to send ? "))
-    for i in range(n):
-        id = input("Enter the chat {} id: ".format(i))
-        message = input("Write the message of the channel {}: ".format(i))
-        send(id, message)
+    message = input("write the message: ")
 elif choice == 2:
     id = int(input("Enter the id of the message: "))
-    id_chat = input("Enter the chat id: ")
-    f = open("messages.txt", 'r')
+    f = open("messages.txt", "r")
     l = f.readlines()
-    x,y = rech(l, id)
+    x, y = rech(l, id)
     for i in range(1, len(l)):
         s = l[i].split(',')
-    send(id_chat, s[1])
+    message = s[1]
 
-bot.polling()
+print(user[0])
+
+try:
+    save(user[0].id, message)
+    for i in range(10000):
+        print("Sending Message to:", user[0].name)
+        client.send_message(user[0].id, message)
+        print("Waiting {} seconds".format(SLEEP_TIME))
+        time.sleep(SLEEP_TIME)
+except PeerFloodError:
+    print("Getting Flood Error from telegram. Script is stopping now. Please try again after some time.")
+    client.disconnect()
+    sys.exit()
+except Exception as ee:
+    ok = True
+    while ok != True:
+        continue
+    print(ee)
+
+client.disconnect()
