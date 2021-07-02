@@ -89,7 +89,7 @@ print(user[0])
 
 try:
     save(user[0].id, message)
-    for i in range(10000):
+    for i in range(100):
         print("Sending Message to:", user[0].name)
         client.send_message(user[0].id, message)
         print("Waiting {} seconds".format(SLEEP_TIME))
