@@ -55,23 +55,12 @@ def rech(A, e):
     return False, e
 
 
-i = 0
-for g in groups:
-    print(str(i) + '- ' + g.title)
-    i += 1
-
-g_index = input("Enter a Number: ")
-target_group = groups[int(g_index)]
-user = client.get_dialogs()
-
-
 def save(id, message):
     to = open("history.txt", "a")
     l = []
     l.append(str(id) + "\t\t")
     l.append(message + "\n")
     to.writelines(l)
-
 
 choice = int(input("Send a new message or an existing one (1 or 2): "))
 if choice == 1:
@@ -85,23 +74,25 @@ elif choice == 2:
         s = l[i].split(',')
     message = s[1]
 
-print(user[0])
-
-try:
-    save(user[0].id, message)
-    for i in range(100):
-        print("Sending Message to:", user[0].name)
-        client.send_message(user[0].id, message)
-        print("Waiting {} seconds".format(SLEEP_TIME))
-        time.sleep(SLEEP_TIME)
-except PeerFloodError:
-    print("Getting Flood Error from telegram. Script is stopping now. Please try again after some time.")
-    client.disconnect()
-    sys.exit()
-except Exception as ee:
-    ok = True
-    while ok != True:
+i = 0
+for g in groups:
+    user = client.get_dialogs()
+    try:
+        save(user[0].id, message)
+        for i in range(3):
+            print("Sending Message to:", user[0].name)
+            client.send_message(user[0].id, message)
+            client.send_message(user[0].id, message)
+            print("Waiting {} seconds".format(SLEEP_TIME))
+            time.sleep(SLEEP_TIME)
+    except PeerFloodError:
+        print("Getting Flood Error from telegram. Script is stopping now. Please try again after some time.")
+        client.disconnect()
+        sys.exit()
+    except Exception as ee:
+        print(ee)
         continue
-    print(ee)
+    i += 1
+    continue
 
 client.disconnect()
