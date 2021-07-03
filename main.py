@@ -1,6 +1,4 @@
 import time
-import random
-import csv
 import sys
 from telethon.errors.rpcerrorlist import PeerFloodError
 from telethon.tl.types import InputPeerUser
@@ -8,8 +6,6 @@ from telethon.sync import TelegramClient
 from telethon.sync import TelegramClient
 from telethon.tl.functions.messages import GetDialogsRequest
 from telethon.tl.types import InputPeerEmpty
-import telebot
-import requests
 
 api_id = <your_api_id>
 api_hash = '<your_api_hash>'
@@ -21,6 +17,7 @@ chats = []
 last_date = None
 chunk_size = 200
 
+# connect client
 client.connect()
 if not client.is_user_authorized():
     client.send_code_request(phone)
@@ -34,6 +31,7 @@ result = client(GetDialogsRequest(
     hash=0
 ))
 
+# get list of chats
 chats.extend(result.chats)
 
 for chat in chats:
@@ -44,17 +42,7 @@ for chat in chats:
         continue
 
 
-
-
-
-# search function
-def rech(A, e):
-    for i in A:
-        if i == e:
-            return True
-    return False, e
-
-
+# function save to file
 def save(id, message):
     to = open("history.txt", "a")
     l = []
@@ -62,24 +50,23 @@ def save(id, message):
     l.append(message + "\n")
     to.writelines(l)
 
+# making choices
 choice = int(input("Send a new message or an existing one (1 or 2): "))
 if choice == 1:
     message = input("write the message: ")
 elif choice == 2:
-    id = int(input("Enter the id of the message: "))
-    f = open("messages.txt", "r")
-    l = f.readlines()
-    x, y = rech(l, id)
-    for i in range(1, len(l)):
-        s = l[i].split(',')
-    message = s[1]
+    f = open("message.txt", "r")
+    l = f.read()
+    print(l)
+    message = l
 
+# send message
 i = 0
 for g in groups:
     user = client.get_dialogs()
     try:
         save(user[0].id, message)
-        for i in range(3):
+        for i in range(1):
             print("Sending Message to:", user[0].name)
             client.send_message(user[0].id, message)
             client.send_message(user[0].id, message)
