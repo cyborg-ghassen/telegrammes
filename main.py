@@ -11,9 +11,9 @@ from telethon.tl.types import InputPeerEmpty
 import telebot
 import requests
 
-api_id = 6064139
-api_hash = 'e17f8cdd2dc3ffe5d8ec5752908976d2'
-phone = '+21699245442'
+api_id = <your_api_id>
+api_hash = '<your_api_hash>'
+phone = '+216<your_phone_number>'
 SLEEP_TIME = 3
 client = TelegramClient(phone, api_id, api_hash)
 groups = []
