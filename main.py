@@ -1,15 +1,13 @@
 import time
 import sys
 from telethon.errors.rpcerrorlist import PeerFloodError
-from telethon.tl.types import InputPeerUser
-from telethon.sync import TelegramClient
 from telethon.sync import TelegramClient
 from telethon.tl.functions.messages import GetDialogsRequest
 from telethon.tl.types import InputPeerEmpty
 
-api_id = <your_api_id>
-api_hash = '<your_api_hash>'
-phone = '+216<your_phone_number>'
+api_id = <api_id>
+api_hash = '<api_hash>'
+phone = '+216<phone_number>'
 SLEEP_TIME = 3
 client = TelegramClient(phone, api_id, api_hash)
 groups = []
@@ -50,6 +48,7 @@ def save(id, message):
     l.append(message + "\n")
     to.writelines(l)
 
+
 # making choices
 choice = int(input("Send a new message or an existing one (1 or 2): "))
 if choice == 1:
@@ -57,29 +56,29 @@ if choice == 1:
 elif choice == 2:
     f = open("message.txt", "r")
     l = f.read()
-    print(l)
     message = l
 
 # send message
 i = 0
 for g in groups:
     user = client.get_dialogs()
-    try:
-        save(user[0].id, message)
-        for i in range(1):
-            print("Sending Message to:", user[0].name)
-            client.send_message(user[0].id, message)
-            client.send_message(user[0].id, message)
-            print("Waiting {} seconds".format(SLEEP_TIME))
-            time.sleep(SLEEP_TIME)
-    except PeerFloodError:
-        print("Getting Flood Error from telegram. Script is stopping now. Please try again after some time.")
-        client.disconnect()
-        sys.exit()
-    except Exception as ee:
-        print(ee)
-        continue
-    i += 1
-    continue
+    while i <= len(groups):
+        try:
+            save(user[i].id, message)
+            for j in range(10):
+                print("Sending Message to:", user[i].name)
+                client.send_message(user[i].id, message)
+                client.send_message(user[i].id, message)
+                print("Waiting {} seconds".format(SLEEP_TIME))
+                time.sleep(SLEEP_TIME)
+        except PeerFloodError:
+            print("Getting Flood Error from telegram. Script is stopping now. Please try again after some time.")
+            client.disconnect()
+            sys.exit()
+        except Exception as ee:
+            print(ee)
+            i += 1
+            continue
+        i += 1
 
 client.disconnect()
