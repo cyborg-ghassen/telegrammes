@@ -5,9 +5,9 @@ from telethon.sync import TelegramClient
 from telethon.tl.functions.messages import GetDialogsRequest
 from telethon.tl.types import InputPeerEmpty
 
-api_id = <api_id>
-api_hash = '<api_hash>'
-phone = '+216<phone_number>'
+api_id = 6064139
+api_hash = 'e17f8cdd2dc3ffe5d8ec5752908976d2'
+phone = '+21699245442'
 SLEEP_TIME = 3
 client = TelegramClient(phone, api_id, api_hash)
 groups = []
@@ -49,26 +49,19 @@ def save(id, message):
     to.writelines(l)
 
 
-# making choices
-choice = int(input("Send a new message or an existing one (1 or 2): "))
-if choice == 1:
-    message = input("write the message: ")
-elif choice == 2:
-    f = open("message.txt", "r")
-    l = f.read()
-    message = l
-
-# send message
-i = 0
-for g in groups:
+for g in chats:
     user = client.get_dialogs()
-    while i <= len(groups):
+for i in range(len(chats)):
+    print("{} - {}".format(i, user[i].name))
+ch = int(input("Enter the group number: "))
+with open("message.txt", "r", encoding="utf-8") as f:
+    for l in f.readlines():
+        # send message
         try:
-            save(user[i].id, message)
+            save(user[ch].id, l)
             for j in range(10):
-                print("Sending Message to:", user[i].name)
-                client.send_message(user[i].id, message)
-                client.send_message(user[i].id, message)
+                print("Sending Message to:", user[ch].name)
+                client.send_message(user[ch].id, l)
                 print("Waiting {} seconds".format(SLEEP_TIME))
                 time.sleep(SLEEP_TIME)
         except PeerFloodError:
@@ -77,8 +70,6 @@ for g in groups:
             sys.exit()
         except Exception as ee:
             print(ee)
-            i += 1
             continue
-        i += 1
 
 client.disconnect()
