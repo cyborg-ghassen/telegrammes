@@ -5,9 +5,9 @@ from telethon.sync import TelegramClient
 from telethon.tl.functions.messages import GetDialogsRequest
 from telethon.tl.types import InputPeerEmpty
 
-api_id = 6064139
-api_hash = 'e17f8cdd2dc3ffe5d8ec5752908976d2'
-phone = '+21699245442'
+api_id = int("<Your api id here>")
+api_hash = '<Your api hash here>'
+phone = '+<Your phone number with country code>'
 SLEEP_TIME = 3
 client = TelegramClient(phone, api_id, api_hash)
 groups = []
@@ -43,9 +43,7 @@ for chat in chats:
 # function save to file
 def save(id, message):
     to = open("history.txt", "a")
-    l = []
-    l.append(str(id) + "\t\t")
-    l.append(message + "\n")
+    l = [str(id) + "\t\t", message + "\n"]
     to.writelines(l)
 
 
@@ -59,11 +57,10 @@ with open("message.txt", "r", encoding="utf-8") as f:
         # send message
         try:
             save(user[ch].id, l)
-            for j in range(10):
-                print("Sending Message to:", user[ch].name)
-                client.send_message(user[ch].id, l)
-                print("Waiting {} seconds".format(SLEEP_TIME))
-                time.sleep(SLEEP_TIME)
+            print("Sending Message to:", user[ch].name)
+            client.send_message(user[ch].id, l)
+            print("Waiting {} seconds".format(SLEEP_TIME))
+            time.sleep(SLEEP_TIME)
         except PeerFloodError:
             print("Getting Flood Error from telegram. Script is stopping now. Please try again after some time.")
             client.disconnect()
