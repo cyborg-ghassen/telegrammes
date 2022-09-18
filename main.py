@@ -47,26 +47,30 @@ def save(id, message):
     to.writelines(l)
 
 
-for g in chats:
-    user = client.get_dialogs()
-for i in range(len(chats)):
-    print("{} - {}".format(i, user[i].name))
-ch = int(input("Enter the group number: "))
-with open("message.txt", "r", encoding="utf-8") as f:
-    for l in f.readlines():
-        # send message
-        try:
-            save(user[ch].id, l)
-            print("Sending Message to:", user[ch].name)
-            client.send_message(user[ch].id, l)
-            print("Waiting {} seconds".format(SLEEP_TIME))
-            time.sleep(SLEEP_TIME)
-        except PeerFloodError:
-            print("Getting Flood Error from telegram. Script is stopping now. Please try again after some time.")
-            client.disconnect()
-            sys.exit()
-        except Exception as ee:
-            print(ee)
-            continue
+c = "Y"
+while c == "Y":
+    for g in chats:
+        user = client.get_dialogs()
+    for i in range(len(chats)):
+        print("{} - {}".format(i, user[i].name))
+    ch = int(input("Enter the group number: "))
+    with open("message.txt", "r", encoding="utf-8") as f:
+        for l in f.readlines():
+            # send message
+            try:
+                save(user[ch].id, l)
+                print("Sending Message to:", user[ch].name)
+                client.send_message(user[ch].id, l)
+                print("Waiting {} seconds".format(SLEEP_TIME))
+                time.sleep(SLEEP_TIME)
+            except PeerFloodError:
+                print("Getting Flood Error from telegram. Script is stopping now. Please try again after some time.")
+                client.disconnect()
+                sys.exit()
+            except Exception as ee:
+                print(ee)
+                continue
+
+        c = input("Do you want to continue ? (Y/n): ")
 
 client.disconnect()
