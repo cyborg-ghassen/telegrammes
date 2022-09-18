@@ -5,9 +5,9 @@ from telethon.sync import TelegramClient
 from telethon.tl.functions.messages import GetDialogsRequest
 from telethon.tl.types import InputPeerEmpty
 
-api_id = int("16420238")
-api_hash = 'ee5846aa26f7a99bc79e6efd4781f2ae'
-phone = '+21650993645'
+api_id = int(input("Enter your api id here: "))
+api_hash = input("Enter your api hash: ")
+phone = input("Enter your phone number with country code like: +21622222222: ")
 SLEEP_TIME = 3
 client = TelegramClient(phone, api_id, api_hash)
 groups = []
