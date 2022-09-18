@@ -5,9 +5,9 @@ from telethon.sync import TelegramClient
 from telethon.tl.functions.messages import GetDialogsRequest
 from telethon.tl.types import InputPeerEmpty
 
-api_id = int("<Your api id here>")
-api_hash = '<Your api hash here>'
-phone = '+<Your phone number with country code>'
+api_id = int("16420238")
+api_hash = 'ee5846aa26f7a99bc79e6efd4781f2ae'
+phone = '+21650993645'
 SLEEP_TIME = 3
 client = TelegramClient(phone, api_id, api_hash)
 groups = []
@@ -34,7 +34,7 @@ chats.extend(result.chats)
 
 for chat in chats:
     try:
-        if chat.megagroup == True:
+        if chat.megagroup:
             groups.append(chat)
     except:
         continue
